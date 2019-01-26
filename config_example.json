@@ -1,4 +1,7 @@
 {
   "token": "Insert you token here",
-  "prefix": "?"
+  "prefix": "?",
+  "reddit_client_id": "Reddit API client ID",
+  "reddit_client_secret": "Reddit API secret",
+  "reddit_user_agent": "Reddit API app name"
 }
