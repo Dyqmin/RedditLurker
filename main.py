@@ -1,22 +1,25 @@
 import discord
 from discord.ext import commands
+import json
 
-# Creating a read-only instance
+with open('config.json') as config:
+    config_data = json.load(config)
 
-# r = praw.Reddit(client_id='kfWixU70Pze-8A',
-#                 client_secret='r5m3jgdLn1PwhhiTWoxnid_HRuI',
-#                 user_agent='DircordBot Lurker')
+bot = commands.Bot(command_prefix=config_data["prefix"],
+                   description="Reddit Lurker")
 
-
-TOKEN = 'NTM2Njc0ODAzMjYwODUwMjA2.Dyt9_A.gjShOwoHSHkvtZSFddUyz-Bj-h4'
-
-bot = commands.Bot(command_prefix='?', description="description")
-
-
+features = ['cogs.Lurker']
 
 @bot.event
 async def on_ready():
     print('Bot rd')
+    for extension in features:
+        try:
+            bot.load_extension(extension)
+            print(f"Extension {extension} loaded!")
+        except Exception as e:
+            exc = '{} cannot be loaded. [{}]'.format(extension, e)
+            print(exc)
 
-
-bot.run(TOKEN)
+if __name__ == '__main__':
+    bot.run(config_data["token"])

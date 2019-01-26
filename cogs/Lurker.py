@@ -8,8 +8,8 @@ class Lurker:
         self.bot = bot
 
     @commands.command()
-    async def ping(self):
-        await self.bot.say("Pong!")
+    async def ping(self, ctx):
+        await ctx.send("Pong!")
 
 
 def setup(bot):

@@ -1,0 +1,11 @@
+__pycache__
+
+# config file
+config.json
+
+
+# virtual venv
+venv/
+
+
+.idea
