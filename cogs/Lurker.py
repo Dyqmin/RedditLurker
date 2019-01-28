@@ -45,6 +45,13 @@ class Lurker:
         else:
             return await ctx.send("I could not find **{}** sorting option".format(sorting))
 
+    @posts.error
+    async def posts_handler(self, ctx, error):
+        """Error Handler for <posts> command"""
+        if isinstance(error, commands.MissingRequiredArgument):
+            if error.param.name == 'subreddit_name':
+                await ctx.send("You need to provide a subreddit!")
+
     @commands.command()
     async def ele(self, ctx):
         """ Secret function. Sends a random gif of a baby elephant.
