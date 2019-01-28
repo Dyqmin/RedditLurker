@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import praw
 import json
-
+from .utils.convert import t_ago
 
 class Lurker:
     def __init__(self, bot):
@@ -13,6 +13,7 @@ class Lurker:
         self.reddit = praw.Reddit(client_id=self.config_data['reddit_client_id'],
                                   client_secret=self.config_data['reddit_client_secret'],
                                   user_agent=self.config_data['reddit_user_agent'])
+        self.URL = 'https://www.reddit.com'
 
     @commands.command()
     async def meme(self, ctx):
@@ -33,15 +34,24 @@ class Lurker:
         # Check if sorting option exists
         if sorting in sorting_options:
             try:
-                # Create a sorting attribute with provided option
+                # Create a sorting attribute with a selected option
                 sub_request = getattr(self.reddit.subreddit(subreddit_name), sorting)
-                response = ''
-                for submission in sub_request(limit=10):
-                    response += "[{}]({})\n".format(submission.title, submission.url)
-                embed = discord.Embed(description='Found threads:\n{}'.format(response))
-                await ctx.send(embed=embed)
+                response = discord.Embed(title="Found threads",
+                                         description="r/{} sorted by {}".format(subreddit_name, sorting),
+                                         color=0xff7011)
+                for sub in sub_request(limit=10):
+                    value = "[Link]({}) Posted by u/{} {}\n\u200B".format(self.URL+sub.permalink, sub.author,
+                                                                          t_ago(sub.created_utc))
+                    if len(sub.title) > 250:
+                        name = sub.title[:250]
+                    else:
+                        name = sub.title
+                    response.add_field(name=name,
+                                       value=value,
+                                       inline=False)
+                await ctx.send(embed=response)
             except Exception as e:
-                return await ctx.send("Got `{}` error. Subreddit doesn't exist or is private".format(e))
+                return await ctx.send("Got `{}` error.".format(e))
         else:
             return await ctx.send("I could not find **{}** sorting option".format(sorting))
 
