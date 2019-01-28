@@ -4,7 +4,6 @@ import time
 # Converts date to time that has passed since
 def t_ago(t):
     secs = time.time() - t
-    print(secs)
     secs = int(secs)
     if 120 > secs:
         return f'{secs} seconds ago'
