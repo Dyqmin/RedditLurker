@@ -4,6 +4,7 @@ import praw
 import json
 from .utils.convert import t_ago
 
+
 class Lurker:
     def __init__(self, bot):
         with open('config.json') as config:
@@ -16,14 +17,20 @@ class Lurker:
         self.URL = 'https://www.reddit.com'
 
     @commands.command()
-    async def meme(self, ctx):
+    async def meme(self, ctx, type: str = "random"):
         """Sends a random meme."""
+        """
+        TODO memes on wholesomememes shittyadviceanimals MemeEconomy AdviceAnimals
+        TODO parameter for new memes
+        """
+        meme_types = ("edgy", "dank", "random")
         await ctx.send(self.reddit.subreddit('edgymemes').random().url)
 
     @commands.command()
     async def posts(self, ctx, subreddit_name: str, sorting: str = "new"):
         """Sends list of threads on subreddit"""
         # TODO multiple subreddits
+        # TODO limit parameter
         sorting_options = (
                             "hot",
                             "new",
@@ -39,16 +46,19 @@ class Lurker:
                 response = discord.Embed(title="Found threads",
                                          description="r/{} sorted by {}".format(subreddit_name, sorting),
                                          color=0xff7011)
+
                 for sub in sub_request(limit=10):
-                    value = "[Link]({}) Posted by u/{} {}\n\u200B".format(self.URL+sub.permalink, sub.author,
-                                                                          t_ago(sub.created_utc))
+                    post_url = self.URL + sub.permalink
+                    post_author = sub.author
+                    post_time = t_ago(sub.created_utc)
+                    value = "[Link]({}) Posted by u/{} {}\n\u200B".format(post_url, post_author, post_time)
+
+                    # Embed allows max 256 characters in name
                     if len(sub.title) > 250:
-                        name = sub.title[:250]
+                        name = sub.title[:250] + "..."
                     else:
                         name = sub.title
-                    response.add_field(name=name,
-                                       value=value,
-                                       inline=False)
+                    response.add_field(name=name, value=value, inline=False)
                 await ctx.send(embed=response)
             except Exception as e:
                 return await ctx.send("Got `{}` error.".format(e))
