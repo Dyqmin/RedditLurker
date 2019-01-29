@@ -1,19 +1,12 @@
 import discord
 from discord.ext import commands
-import praw
-import json
 from .utils.convert import t_ago
 
 
 class Lurker:
     def __init__(self, bot):
-        with open('config.json') as config:
-            self.config_data = json.load(config)
         self.bot = bot
-        # Creating read-only reddit instance
-        self.reddit = praw.Reddit(client_id=self.config_data['reddit_client_id'],
-                                  client_secret=self.config_data['reddit_client_secret'],
-                                  user_agent=self.config_data['reddit_user_agent'])
+        self.reddit = self.bot.reddit
         self.URL = 'https://www.reddit.com'
 
     @commands.command()
@@ -53,12 +46,13 @@ class Lurker:
                     post_time = t_ago(sub.created_utc)
                     value = "[Link]({}) Posted by u/{} {}\n\u200B".format(post_url, post_author, post_time)
 
-                    # Embed allows max 256 characters in name
+                    # Embed allows max 256 characters in name parameter
                     if len(sub.title) > 250:
                         name = sub.title[:250] + "..."
                     else:
                         name = sub.title
                     response.add_field(name=name, value=value, inline=False)
+
                 await ctx.send(embed=response)
             except Exception as e:
                 return await ctx.send("Got `{}` error.".format(e))
