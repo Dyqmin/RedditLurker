@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import json
 import praw
+
+
 # Read config parameters
 with open('config.json') as config:
     config_data = json.load(config)
