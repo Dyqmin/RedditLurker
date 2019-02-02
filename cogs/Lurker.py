@@ -11,14 +11,19 @@ class Lurker:
 
     @commands.command(name='posts', aliases=['threads'])
     async def show_posts(self, ctx, subreddit_name: str, sorting: str = "new", posts_limit: int = 10):
-        """Sends list of threads on subreddit"""
+        """
+        Sends list of threads on subreddit
+        Sorting options: hot, new, random, rising, top, controversial
+        """
         # TODO multiple subreddits
+        # TODO top sorting options
         sorting_options = (
                             "hot",
                             "new",
                             "random",
                             "rising",
-                            "top"
+                            "top",
+                            "controversial"
                           )
 
         # Check if sorting option exists
@@ -32,8 +37,7 @@ class Lurker:
 
                 if posts_limit > 25:
                     posts_limit = 25
-                    response.title += ' [ Posts limit reduced to maximum (25) ]'
-
+                    response.set_footer(text='Posts limit reduced to maximum (25)')
                 for sub in sub_request(limit=posts_limit):
                     post_url = self.URL + sub.permalink
                     post_author = sub.author
@@ -61,7 +65,9 @@ class Lurker:
         """Error Handler for <posts> command"""
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'subreddit_name':
-                await ctx.send("You need to define  a subreddit!")
+                await ctx.send("You need to define a subreddit!")
+        if isinstance(error, commands.UserInputError):
+            await ctx.send("Wrong input!")
 
 
 def setup(bot):
