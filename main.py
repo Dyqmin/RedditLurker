@@ -9,7 +9,7 @@ with open('config.json') as config:
     config_data = json.load(config)
 
 bot = commands.Bot(command_prefix=config_data["prefix"],
-                   description="Reddit Lurker")
+                   description='Reddit Lurker')
 
 # Creating read-only reddit instance
 bot.reddit = praw.Reddit(client_id=config_data['reddit_client_id'],
@@ -17,7 +17,7 @@ bot.reddit = praw.Reddit(client_id=config_data['reddit_client_id'],
                           user_agent=config_data['reddit_user_agent'])
 
 # List of cogs
-features = ['cogs.Lurker']
+features = ['cogs.Lurker', 'cogs.RandomImage', 'cogs.User']
 
 
 @bot.event
